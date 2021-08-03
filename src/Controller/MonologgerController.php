@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Monolog\Handler\BrowserConsoleHandler;
 use Monolog\Handler\FirePHPHandler;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\StreamHandler;
@@ -48,11 +49,16 @@ class MonologgerController extends AbstractController
         
         $log = new Logger('info');
         $log->pushHandler(new StreamHandler('../src/logs/info.log', Logger::INFO));
+        $log->pushHandler(new BrowserConsoleHandler);
+
         $log->info($type.': '.$message);
+
+        BrowserConsoleHandler::send('test');
 
         return $this->render('monologger/index.html.twig', [
             'controller_name' => 'MonologgerController',
         ]);
+
     }
 
     #[Route('/monologger/error', name: 'error', methods: ['POST'])]
