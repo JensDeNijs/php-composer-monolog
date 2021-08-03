@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Monolog\Handler\FirePHPHandler;
+use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -75,10 +76,16 @@ class MonologgerController extends AbstractController
         $message = $request->get("message");
         $type = $request->get("type");
 
-        var_dump($type);
+        $to= 'jenneke1996@hotmail.com';
+        $from='jenneke1996@hotmail.com';
+        $subject='automailer';
+
         $log = new Logger('warning');
+
         $log->pushHandler(new StreamHandler('../src/logs/warning.log', Logger::WARNING));
-        $log->warning($type.': '.$message);
+        $log->pushHandler(new NativeMailerHandler($to, $subject, $from , Logger::WARNING));
+
+        $log->warning($message);
 
         return $this->render('monologger/index.html.twig', [
             'controller_name' => 'MonologgerController',
@@ -91,9 +98,16 @@ class MonologgerController extends AbstractController
         $message = $request->get("message");
         $type = $request->get("type");
 
+        $to= 'jenneke1996@hotmail.com';
+        $from='jenneke1996@hotmail.com';
+        $subject='automailer';
+
         $log = new Logger('emergency');
-        $log->pushHandler(new StreamHandler('../src/logs/emergency.log', Logger::EMERGENCY));
-        $log->emergency($type.': '.$message);
+
+        $log->pushHandler(new StreamHandler('../src/logs/emergency.log'));
+        $log->pushHandler(new NativeMailerHandler($to, $subject, $from ));
+
+        $log->emergency($message);
 
         return $this->render('monologger/index.html.twig', [
             'controller_name' => 'MonologgerController',
